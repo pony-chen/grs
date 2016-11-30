@@ -8,10 +8,10 @@ URL = urllib3.connection_from_url('http://mis.tse.com.tw/',
         #headers={'Accept-Language': 'en-US'})
         headers={'Accept-Language': 'zh-TW'})
 
-#STOCKPATH = '/stock/api/getStockInfo.jsp?ex_ch=tse_1101.tw_20140530&json=1&delay=0&_=1401450118102'
-STOCKPATH = '/stock/api/getStockInfo.jsp?ex_ch=%(exchange)s_%(no)s.tw_%(date)s&json=1&delay=%(delay)s&_=%(timestamp)s'
-#WEIGHTPATH = '/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw|otc_o00.tw|tse_FRMSA.tw&json=1&delay=0&_=1401464211663'
-WEIGHTPATH = '/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw_%(date)s|otc_o00.tw_%(date)s|tse_FRMSA.tw_%(date)s&json=1&delay=%(delay)s&_=%(timestamp)s'
+#STOCKPATH = '/stock/api/getStockInfo.jsp?ex_ch=tse_1101.tw&json=1&delay=0&_=1480476935024'
+STOCKPATH = '/stock/api/getStockInfo.jsp?ex_ch=%(exchange)s_%(no)s.tw&json=1&delay=%(delay)s&_=%(timestamp)s'
+#WEIGHTPATH = '/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw|otc_o00.tw|tse_FRMSA.tw&json=1&delay=0&_=1480477029895'
+WEIGHTPATH = '/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw|otc_o00.tw|tse_FRMSA.tw&json=1&delay=%(delay)s&_=%(timestamp)s'
 
 
 class Realtime(object):
@@ -23,16 +23,21 @@ class Realtime(object):
         :param int delay: 延遲回傳
         :rtype: dict
     """
-    def __init__(self, no, date, delay=0):
+    def __init__(self, no, date=None, delay=0):
         if not date:
             date = datetime.now()
 
+        self._exchange = 'tse'
         params = {'no': no, 'exchange': self._exchange,
                   'date': date.strftime('%Y%m%d'),
-                  'timestamp': int(time.time()),
+                  'timestamp': int(time.time()*1000),
                   'delay': delay}
 
-        self.result = URL.request('GET', STOCKPATH % params)
+        cookies = URL.request('GET', '/stock/index.jsp').headers.get('Set-Cookie')
+        headers = {'User-Agent': 'grs',
+                   'Cookie': cookies.split(';')[0]}
+
+        self.result = URL.request('GET', STOCKPATH % params, headers=headers)
 
     @property
     def raw(self):
@@ -164,7 +169,7 @@ class RealtimeWeight(object):
             date = datetime.now()
 
         params = {'date': date.strftime('%Y%m%d'),
-                  'timestamp': int(time.time()),
+                  'timestamp': int(time.time()*1000),
                   'delay': delay}
 
         self.result = URL.request('GET', WEIGHTPATH % params)

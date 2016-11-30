@@ -86,14 +86,13 @@ class TestGrs(unittest.TestCase):
         assert result is False
 
     @staticmethod
-    @unittest.skip('Known issues.')
     def test_realtime():
         real_time = grs.RealtimeStock('2618')
-        assert real_time.real['no'] == '2618'
+        assert real_time.data['2618']['info']['no'] == '2618'
         real_time = grs.RealtimeWeight()
-        assert real_time.real['no'] == '1'
+        assert real_time.data['FRMSA']['info']['no'] == 'FRMSA'
         real_time = grs.RealtimeStock('0050')
-        assert real_time.real['no'] == '0050'
+        assert real_time.data['0050']['info']['no'] == '0050'
         try:
             real_time = grs.RealtimeStock(0050)
         except AssertionError:

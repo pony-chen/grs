@@ -31,6 +31,7 @@ from .best_buy_or_sell import BestFourPoint
 
 try:
     from .fetch_data import Stock
+    from .realtime2 import Realtime as RealtimeStock
     from .realtime2 import RealtimeTWSE
     from .realtime2 import RealtimeOTC
     from .realtime2 import RealtimeWeight
