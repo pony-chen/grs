@@ -27,7 +27,9 @@ class Realtime(object):
         if not date:
             date = datetime.now()
 
-        self._exchange = 'tse'
+        if self._exchange == '':
+            self._exchange = 'tse'
+
         params = {'no': no, 'exchange': self._exchange,
                   'date': date.strftime('%Y%m%d'),
                   'timestamp': int(time.time()*1000),

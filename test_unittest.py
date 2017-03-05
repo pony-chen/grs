@@ -99,6 +99,15 @@ class TestGrs(unittest.TestCase):
             pass
 
     @staticmethod
+    def test_realtime_otc():
+        real_time = grs.RealtimeOTC('8044')
+        assert real_time.data['8044']['info']['no'] == '8044'
+        try:
+            real_time = grs.RealtimeOTC(8044)
+        except AssertionError:
+            pass
+
+    @staticmethod
     def test_countdown():
         result = grs.Countdown().countdown
         assert isinstance(result, int)
